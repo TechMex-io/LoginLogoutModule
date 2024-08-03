@@ -22,46 +22,6 @@ class LoginLogoutModule extends WireData implements Module, ConfigurableModule
     $this->addHookBefore('Pages::render', $this, 'handleLoginLogout');
   }
 
-  public function handleLoginLogout(HookEvent $event)
-  {
-    $page = $event->object;
-
-    if ($page->template == 'login') {
-      $this->handleLogin();
-    } elseif ($page->template == 'logout') {
-      $this->handleLogout();
-    }
-  }
-
-  protected function handleLogin()
-  {
-    $user = $this->wire('user');
-    $input = $this->wire('input');
-    $session = $this->wire('session');
-
-    if ($user->isLoggedin()) {
-      $session->redirect('/');
-    }
-
-    if ($input->post->username && $input->post->password) {
-      $username = $input->post->username;
-      $password = $input->post->password;
-
-      if ($session->login($username, $password)) {
-        $session->redirect('/');
-      } else {
-        $this->error = "Invalid username or password";
-      }
-    }
-  }
-
-  protected function handleLogout()
-  {
-    $session = $this->wire('session');
-    $session->logout();
-    $session->redirect('/');
-  }
-
   public function ___install()
   {
     $this->createLoginTemplate();
